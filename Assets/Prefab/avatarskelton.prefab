@@ -250,7 +250,6 @@ GameObject:
   - component: {fileID: 3135181205265814841}
   - component: {fileID: 6079822490653938575}
   - component: {fileID: 6910816392961620320}
-  - component: {fileID: 7834481877457255001}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -340,14 +339,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: -3765101136194183106}
   _networkObjectCache: {fileID: -3765101136194183106}
   jakepoint: 0
---- !u!81 &7834481877457255001
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6843274851008389529}
-  m_Enabled: 1
 --- !u!1 &7532329796938100960
 GameObject:
   m_ObjectHideFlags: 0

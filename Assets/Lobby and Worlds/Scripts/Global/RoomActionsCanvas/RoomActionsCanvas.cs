@@ -1,5 +1,6 @@
 ﻿using FirstGearGames.LobbyAndWorld.Extensions;
 using FirstGearGames.LobbyAndWorld.Lobbies;
+using PlayFlow;
 using TMPro;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ namespace FirstGearGames.LobbyAndWorld.Global.Canvases
         /// Prefix for signedInText.
         /// </summary>
         private const string CURRENT_ROOM_PREFIX = "Currently in ";
+         
         #endregion
 
         private void Awake()
@@ -93,6 +95,9 @@ namespace FirstGearGames.LobbyAndWorld.Global.Canvases
             //Hide current room.
             ShowCurrentRoom(false);
             LobbyNetwork.LeaveRoom();
+            
+            
+
         }
 
 

@@ -70,6 +70,7 @@ namespace FishNet.Transporting.Tugboat
         [Range(0, MAX_TIMEOUT_SECONDS)]
         [SerializeField]
         private ushort _timeout = 15;
+        
         #endregion
 
         #region Private.
@@ -104,6 +105,11 @@ namespace FishNet.Transporting.Tugboat
         {
             base.Initialize(networkManager, transportIndex);
             networkManager.TimeManager.OnUpdate += TimeManager_OnUpdate;
+            
+
+
+
+
         }
 
         protected void OnDestroy()
@@ -255,6 +261,7 @@ namespace FishNet.Transporting.Tugboat
         {
             SanitizeChannel(ref channelId);
             _client.SendToServer(channelId, segment);
+            
         }
         /// <summary>
         /// Sends data to a client.
@@ -326,8 +333,12 @@ namespace FishNet.Transporting.Tugboat
         /// </summary>
         /// <param name="address"></param>
         public override void SetClientAddress(string address)
-        {
+{
+              
+
             _clientAddress = address;
+            
+
         }
         /// <summary>
         /// Gets which address the client will connect to.

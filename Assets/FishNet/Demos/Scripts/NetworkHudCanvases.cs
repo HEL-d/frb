@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+
 namespace FishNet.Example
 {
 
@@ -60,6 +61,7 @@ namespace FishNet.Example
         [Tooltip("Indicator for client state.")]
         [SerializeField]
         private Image _clientIndicator;
+        
         #endregion
 
         #region Private.
@@ -129,6 +131,7 @@ namespace FishNet.Example
 
         private void Start()
         {
+         
 #if !ENABLE_INPUT_SYSTEM
         SetEventSystem();
         BaseInputModule inputModule = FindObjectOfType<BaseInputModule>();
@@ -138,7 +141,7 @@ namespace FishNet.Example
             _serverIndicator.transform.parent.gameObject.SetActive(false);
             _clientIndicator.transform.parent.gameObject.SetActive(false);
 #endif
-
+                  
             _networkManager = FindObjectOfType<NetworkManager>();
             if (_networkManager == null)
             {
@@ -147,10 +150,16 @@ namespace FishNet.Example
             }
             else
             {
+                
                 UpdateColor(LocalConnectionState.Stopped, ref _serverIndicator);
                 UpdateColor(LocalConnectionState.Stopped, ref _clientIndicator);
                 _networkManager.ServerManager.OnServerConnectionState += ServerManager_OnServerConnectionState;
                 _networkManager.ClientManager.OnClientConnectionState += ClientManager_OnClientConnectionState;
+              
+
+
+
+
             }
 
             if (_autoStartType == AutoStartType.Host || _autoStartType == AutoStartType.Server)
@@ -185,6 +194,9 @@ namespace FishNet.Example
                 c = _changingColor;
 
             img.color = c;
+            
+
+
         }
 
 

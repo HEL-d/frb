@@ -150,6 +150,7 @@ namespace FirstGearGames.LobbyAndWorld.Lobbies.JoinCreateRoomCanvases
         /// <returns></returns>        
         private int ConvertPlayerCount(string countText)
         {
+            
             int result;
             if (!int.TryParse(countText, out result))
                 return 0;

@@ -11,6 +11,8 @@ using Unity.VisualScripting;
 using ReadyPlayerMe.Core;
 using FishNet.Component.Animating;
 using UnityEngine.Rendering;
+using System.Collections;
+using Unity.VisualScripting.FullSerializer;
 
 public class NetworkAvatarAssigner : NetworkBehaviour
 {
@@ -60,8 +62,9 @@ public class NetworkAvatarAssigner : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        avatarLoaded = false;
         
+          avatarLoaded = false;
+
 
 
     }
@@ -80,7 +83,7 @@ public class NetworkAvatarAssigner : NetworkBehaviour
                 avatarUrl = GetAvatarUrl();
             }
 
-            StartLoadAvatar(GetAvatarUrl());
+            StartCoroutine(StartLoadAvatar(GetAvatarUrl()));
             avatarLoaded = true;
           
         }
@@ -97,31 +100,28 @@ public class NetworkAvatarAssigner : NetworkBehaviour
     }
 
     
-  private void StartLoadAvatar(string v)
+  private IEnumerator StartLoadAvatar(string v)
     {
         ApplicationData.Log();
         var avatarLoader = new AvatarObjectLoader();
         avatarLoader.OnCompleted += (_, args) =>
         {
-           
-            avatar = args.Avatar;
+          
+           avatar = args.Avatar;
               if(args.Metadata.OutfitGender == OutfitGender.Masculine)
             {
                 avatar.GetComponent<Animator>().runtimeAnimatorController = transform.GetComponent<Animator>().runtimeAnimatorController;
                 avatar.AddComponent<AnimationStateConroller>();
                 avatar.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
+                avatar.AddComponent<EyeAnimationHandler>();
             }  else
             {
                 avatar.GetComponent<Animator>().runtimeAnimatorController = transform.GetComponent<Animator>().runtimeAnimatorController;
                 avatar.AddComponent<AnimationStateConroller>();
+                avatar.AddComponent<EyeAnimationHandler>();
             }
+          
 
-
-           
-            
-   
-            avatar.AddComponent<EyeAnimationHandler>();
-           
             if (parentRef.name == v)
             {
                 avatar.transform.parent = transform;
@@ -136,30 +136,21 @@ public class NetworkAvatarAssigner : NetworkBehaviour
 
 
             
-            parentRef.name = PARENT;
+         parentRef.name = PARENT;
            
         };
         avatarLoader.LoadAvatar(v);
         parentRef.name = v;
-
+        yield return new WaitUntil(() => !avatarLoaded);
 
 
     }
 
    
-    
-
-
-
-
-
-
-
-
-   
 
     private void OnDestroy()
     {
+        StopAllCoroutines();
         if(avatar != null) Destroy(avatar);
         
         

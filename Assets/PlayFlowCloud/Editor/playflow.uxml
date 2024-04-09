@@ -12,15 +12,24 @@
         <ui:ProgressBar title="progress" name="progress" style="display: none;" />
         <ui:Foldout text="PlayFlow Config" value="false" view-data-key="ConfigFoldout" usage-hints="None" name="ConfigFoldout">
             <ui:Button tabindex="-1" text="Get Token" display-tooltip-when-elided="true" name="ButtonGetToken" />
-            <ui:TextField picking-mode="Ignore" label="Token" name="TextToken" view-data-key="token" />
+            <ui:TextField picking-mode="Ignore" label="Token" name="TextToken" view-data-key="token" password="true" />
         </ui:Foldout>
         <ui:Foldout text="Publish Build" value="false" name="UploadFoldout" view-data-key="UploadFoldout" tabindex="0">
             <ui:Toggle label="Development Build" name="DevelopmentBuild" view-data-key="DevelopmentBuild" style="flex-direction: row; height: auto; align-items: auto; justify-content: space-around;" />
             <ui:Toggle label="Use Build Settings Scene List" name="UseBuildSettings" view-data-key="UseBuildSettings" style="flex-direction: row; align-items: auto; justify-content: space-between;" />
             <ui:DropdownField label="Server Scene" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="sceneDropDown" view-data-key="sceneDropDown" />
+            <ui:TextField picking-mode="Ignore" label="Build Version" name="servertag" view-data-key="servertag" password="false" value="default" />
             <ui:GroupBox style="align-items: auto; justify-content: space-around; flex-direction: row; width: auto; margin-left: 0;">
                 <ui:Button tabindex="-1" text="Upload Server" display-tooltip-when-elided="true" name="ButtonUpload" style="position: relative; top: auto; left: auto; height: auto; width: 50%; flex-direction: column;" />
                 <ui:Button tabindex="-1" text="Get Upload Status" display-tooltip-when-elided="true" name="ButtonUploadStatus" style="position: relative; top: auto; left: auto; height: auto; width: 50%;" />
+            </ui:GroupBox>
+        </ui:Foldout>
+        <ui:Foldout text="Manage Build Versions" value="true" name="TagsFoldout" view-data-key="TagsFoldout" style="display: flex;">
+            <ui:DropdownField label="Build Tags" name="BuildTagsDropdown" view-data-key="BuildTagsDropdown" index="0" />
+            <ui:GroupBox style="flex-direction: row; align-items: center; justify-content: space-around;" />
+            <ui:GroupBox style="align-items: auto; justify-content: space-around; flex-direction: row; width: auto; margin-left: 0;">
+                <ui:Button text="Refresh" name="ButtonGetTags" view-data-key="ButtonGetTags" style="-unity-text-align: middle-center; white-space: nowrap; width: 50%;" />
+                <ui:Button text="Delete Build" name="ButtonDeleteTag" view-data-key="ButtonDeleteTag" style="width: 50%;" />
             </ui:GroupBox>
         </ui:Foldout>
         <ui:VisualElement />
@@ -29,7 +38,8 @@
             <ui:Toggle label="Enable SSL" view-data-key="enableSSL" name="enableSSL" style="overflow: hidden; position: relative; top: auto; left: auto; height: auto; width: auto; align-items: auto; justify-content: flex-end; flex-direction: row; margin-left: 3px;" />
             <ui:TextField picking-mode="Ignore" label="Server Port for SSL" value="0" text="0" name="sslValue" view-data-key="sslValue" style="display: flex;" />
             <ui:DropdownField label="Location" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="locationDropdown" view-data-key="locationDropdown" />
-            <ui:DropdownField label="Instance Type" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="instanceTypeDropdown" view-data-key="instanceTypeDropdown" style="display: none;" />
+            <ui:DropdownField label="Instance Type" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="instanceTypeDropdown" view-data-key="instanceTypeDropdown" style="display: flex;" />
+            <ui:DropdownField label="Build Version" name="LaunchTagDropdown" index="0" tooltip="Use this dropdown to choose a specific build version of your game. If no version is selected, then the default server build is used." view-data-key="LaunchTagDropdown" />
             <ui:Button tabindex="-1" text="Start  Server" display-tooltip-when-elided="true" name="ButtonStart" style="height: 30px; width: auto; -unity-text-align: middle-center; white-space: nowrap; right: auto; left: auto; align-items: stretch; justify-content: flex-start;" />
         </ui:Foldout>
         <ui:VisualElement />
@@ -42,7 +52,7 @@
                 <ui:Button tabindex="-1" text="Restart Server" display-tooltip-when-elided="true" name="ButtonRestartServer" style="width: 25%;" />
                 <ui:Button tabindex="-1" text="Stop Server" display-tooltip-when-elided="true" name="ButtonStopServer" style="width: 25%;" />
             </ui:GroupBox>
-            <ui:Foldout text="Reset Instance" value="false" name="Reset" view-data-key="foldPublish" style="margin-left: 3px; padding-left: 0; margin-right: 0;">
+            <ui:Foldout text="Reset Instance" value="false" name="Reset" view-data-key="foldPublish" style="margin-left: 3px; padding-left: 0; margin-right: 0; display: none;">
                 <ui:GroupBox style="align-items: auto; justify-content: space-around; flex-direction: row; width: auto; margin-left: 0;">
                     <ui:Button tabindex="-1" text="Reset Instance" display-tooltip-when-elided="true" name="ResetInstance" style="position: relative; top: auto; left: auto; height: auto; width: 50%; flex-direction: column;" />
                     <ui:Button tabindex="-1" text="Get Instance Status" display-tooltip-when-elided="true" name="InstanceStatus" style="position: relative; top: auto; left: auto; height: auto; width: 50%;" />

@@ -15,9 +15,9 @@ public class PlayFlowBuilder
                                        "Server" + Path.DirectorySeparatorChar + "PlayFlowCloud" +
                                        Path.DirectorySeparatorChar + "PlayFlowCloudServerFiles" +
                                        Path.DirectorySeparatorChar + "Server.x86_64";
-    public static void BuildServer(bool devmode, List<string> sceneList)
+    public static bool BuildServer(bool devmode, List<string> sceneList)
     {
-
+        bool success = false;
         try
         {
             EditorUtility.DisplayProgressBar("PlayFlowCloud", "Build Linux Server", 0.25f);
@@ -54,18 +54,29 @@ public class PlayFlowBuilder
 #endif
 
 
-            BuildPipeline.BuildPlayer(buildPlayerOptions);
+            var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+
+            if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
+            {
+                success = true;
+            }
+            else
+            {
+                Debug.LogError("BuildServer failed: " + report.summary.result);
+            }
         }
 
         catch (Exception e)
         {
             Debug.Log(e.StackTrace);
+            success = false;
         }
 
         finally
         {
             EditorUtility.ClearProgressBar();
         }
+        return success;
     }
 
     public static string ZipServerBuild()

@@ -28,11 +28,14 @@ public class PlayFlowCloudDeploy : EditorWindow
     private Button stopButton;
     private Button resetButton;
     private Button resetStatusButton;
+    private Button getTagsButton;
+    private Button ButtonDeleteTag;
 
     private TextField tokenField;
     private TextField sslValue;
     private TextField argumentsField;
     private TextField logs;
+    private TextField servertag;
 
 
     private Foldout ConfigFoldout;
@@ -40,6 +43,7 @@ public class PlayFlowCloudDeploy : EditorWindow
     private Foldout LaunchServersFoldout;
     private Foldout ManageFoldout;
     private Foldout LogsFoldout;
+    private Foldout TagsFoldout;
 
     
 
@@ -51,6 +55,10 @@ public class PlayFlowCloudDeploy : EditorWindow
     private DropdownField instanceType;
     private DropdownField activeServersField;
     private DropdownField sceneDropDown;
+    private DropdownField LaunchTagDropdown;
+    
+    private DropdownField tagsDropDown;
+
 
     private Toggle buildSettingsToggle;
 
@@ -79,7 +87,10 @@ public class PlayFlowCloudDeploy : EditorWindow
         {"South East Asia (Singapore)", "sea"},
         {"East Asia (Korea)", "ea"},
         {"East Asia (Japan)", "ap-north"},
-        {"Australia (Sydney)", "ap-southeast"}
+        {"Australia (Sydney)", "ap-southeast"},
+        {"South Africa (Cape Town)", "south-africa"},
+        {"South America (Brazil)", "south-america-brazil"},
+        {"South America (Chile)", "south-america-chile"}
     };
 
     Dictionary<string, string> instance_types = new Dictionary<string, string>
@@ -108,6 +119,10 @@ public class PlayFlowCloudDeploy : EditorWindow
         resetButton =  rootVisualElement.Q<Button>("ResetInstance");
         resetStatusButton =  rootVisualElement.Q<Button>("InstanceStatus");
         QuickStart =  rootVisualElement.Q<Button>("QuickStart");
+        getTagsButton = rootVisualElement.Q<Button>("ButtonGetTags");
+        tagsDropDown = rootVisualElement.Q<DropdownField>("BuildTagsDropdown");
+        ButtonDeleteTag = rootVisualElement.Q<Button>("ButtonDeleteTag");
+        LaunchTagDropdown = rootVisualElement.Q<DropdownField>("LaunchTagDropdown");
 
         
         ConfigFoldout = rootVisualElement.Q<Foldout>("ConfigFoldout");
@@ -115,7 +130,7 @@ public class PlayFlowCloudDeploy : EditorWindow
         LaunchServersFoldout = rootVisualElement.Q<Foldout>("LaunchServersFoldout");
         ManageFoldout = rootVisualElement.Q<Foldout>("ManageFoldout");
         LogsFoldout = rootVisualElement.Q<Foldout>("LogsFoldout");
-        
+        TagsFoldout = rootVisualElement.Q<Foldout>("TagsFoldout");
 
         
         logs = rootVisualElement.Q<TextField>("logs");
@@ -128,6 +143,7 @@ public class PlayFlowCloudDeploy : EditorWindow
 
         argumentsField = rootVisualElement.Q<TextField>("TextArgs");
         sslValue = rootVisualElement.Q<TextField>("sslValue");
+        servertag = rootVisualElement.Q<TextField>("servertag");
 
 
         devBuild = rootVisualElement.Q<Toggle>("DevelopmentBuild");
@@ -168,6 +184,12 @@ public class PlayFlowCloudDeploy : EditorWindow
         activeServersField.choices = new List<string>();
 
         sceneDropDown.RegisterCallback<MouseDownEvent>(OnSceneDropDown);
+        
+        //When the user clicks the dropdown first time, we populate the list
+        LaunchTagDropdown.RegisterCallback<MouseDownEvent>(OnLaunchTagDropDown);
+        tagsDropDown.RegisterCallback<MouseDownEvent>(OnLaunchTagDropDown);
+
+        
         documentationButton.clicked += OnDocumentationPressed;
         discordButton.clicked += OnDiscordPressed;
         pricingButton.clicked += OnPricingPressed;
@@ -188,9 +210,55 @@ public class PlayFlowCloudDeploy : EditorWindow
 
         resetButton.clicked += OnResetPressed;
         resetStatusButton.clicked += OnResetStatusPressed;
+        getTagsButton.clicked += OnGetTagsPressed;
+        ButtonDeleteTag.clicked += OnDeleteTagPressed;
 
 
     }
+    
+
+
+    private async void OnDeleteTagPressed()
+    {
+        if (tagsDropDown.value == null || tagsDropDown.value.Equals("") || tagsDropDown.value.Equals("default"))
+        {
+            outputLogs("Please select a tag to delete. Default tag cannot be deleted");
+            return;
+        }
+        validateToken();
+        showProgress();
+        string response = await PlayFlowAPI.Delete_Tag(tokenField.value, tagsDropDown.value);
+        outputLogs(response);
+        hideProgress();
+        
+        //Change dropdown to index 0
+        tagsDropDown.index = 0;
+        
+        OnGetTagsPressed();
+    }
+    
+    private async void OnLaunchTagDropDown(MouseDownEvent evt)
+    {
+        OnGetTagsPressed();
+    }
+    private async void OnGetTagsPressed()
+    {
+        
+        validateToken();
+        showProgress();
+        string response = await PlayFlowAPI.Get_Tags(tokenField.value);
+        string currentTag = tagsDropDown.value;
+        string currentLaunchTag = LaunchTagDropdown.value;
+        outputLogs(response);
+        //response to json object
+        TagsResponse tagsResponse = JsonUtility.FromJson<TagsResponse>(response);
+        tagsDropDown.choices = tagsResponse.tags.ToList();
+        LaunchTagDropdown.choices = tagsResponse.tags.ToList();
+        tagsDropDown.value = currentTag;
+        LaunchTagDropdown.value = currentLaunchTag;
+        hideProgress();
+    }
+    
 
     private void OnSceneDropDown(MouseDownEvent clickEvent)
     {
@@ -233,15 +301,63 @@ public class PlayFlowCloudDeploy : EditorWindow
 
     private void HandleToken(ChangeEvent<string> value)
     {
-        instanceType.style.display = isProductionToken(value.newValue) ? DisplayStyle.Flex : DisplayStyle.None;
+        //Check if token is valid and has > or = 32 characters before we validate
+        validate(value.newValue);
         
-         if (isProductionToken(value.newValue)){
-             sslValue.style.display = enableSSL.value ? DisplayStyle.Flex : DisplayStyle.None;
-         }
-         else
-         {
-             sslValue.style.display = DisplayStyle.None;
-         }
+    }
+
+    private int api_version = 8;
+
+    private async Task validate(string value)
+    {
+        string response = await PlayFlowAPI.Validate_Token(value);
+        //response json = {"success":true,"api_version":"9"}
+        //Check API version from the response json
+        //Validation_Response
+        Validation_Response validationResponse = JsonUtility.FromJson<Validation_Response>(response);
+
+        if (validationResponse.success == "true")
+        {
+            if (validationResponse.api_version == "9")
+            {
+                enableSSL.style.display = DisplayStyle.None;
+                sslValue.style.display = DisplayStyle.None;
+                
+                //Build Tag Enable
+                LaunchTagDropdown.style.display = DisplayStyle.Flex;
+                tagsDropDown.style.display = DisplayStyle.Flex;
+                ButtonDeleteTag.style.display = DisplayStyle.Flex;
+                getTagsButton.style.display = DisplayStyle.Flex;
+                servertag.style.display = DisplayStyle.Flex;
+                TagsFoldout.style.display = DisplayStyle.Flex;
+                
+                api_version = 9;
+
+            }
+            else
+            {
+                enableSSL.style.display = DisplayStyle.Flex;
+                sslValue.style.display = DisplayStyle.Flex;
+                
+                //Build Tag Disable
+                LaunchTagDropdown.style.display = DisplayStyle.None;
+                tagsDropDown.style.display = DisplayStyle.None;
+                ButtonDeleteTag.style.display = DisplayStyle.None;
+                getTagsButton.style.display = DisplayStyle.None;
+                
+                //Clear the dropdowns
+                LaunchTagDropdown.index = 0;
+                tagsDropDown.index = 0;
+                
+                TagsFoldout.style.display = DisplayStyle.None;
+                servertag.style.display = DisplayStyle.None;
+                servertag.value = "default";
+                
+                api_version = 8;
+                
+                
+            }
+        }
     }
 
     private bool isProductionToken(string value)
@@ -501,19 +617,67 @@ public class PlayFlowCloudDeploy : EditorWindow
         }
 
     }
-    
+
+
+    public static bool CheckLinuxServerModule()
+    {
+        // Check if the Linux Standalone target is supported
+        bool isLinuxTargetSupported = BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, BuildTarget.StandaloneLinux64);
+        if (!isLinuxTargetSupported)
+        {
+            Debug.LogError("Linux Standalone target is not installed.");
+            return false;
+        }
+
+        try
+        {
+            // Attempt to switch to the Linux Standalone target and set the server subtarget
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneLinux64);
+            EditorUserBuildSettings.standaloneBuildSubtarget = StandaloneBuildSubtarget.Server;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Failed to set Linux Server build subtarget: " + e.Message);
+            return false;
+        }
+
+        return true;
+    }
+
+
     private void OnUploadPressed()
     {
-        
-        
-        validateToken();
-        showProgress(25);
+                
+        if (servertag.value == null || servertag.value.Equals(""))
+        {
+            Debug.LogError("Server tag cannot be empty. Please enter a server tag or use `default` as the server tag");
+            return;
+        }
         
         BuildTarget standaloneTarget = EditorUserBuildSettings.selectedStandaloneTarget;
         BuildTargetGroup currentBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(standaloneTarget);
 #if UNITY_2021_2_OR_NEWER
         StandaloneBuildSubtarget currentSubTarget = EditorUserBuildSettings.standaloneBuildSubtarget;
 #endif
+        
+#if UNITY_2021_2_OR_NEWER
+        if (CheckLinuxServerModule() == false)
+        {
+            return;
+        }
+#endif
+        
+        validateToken();
+        showProgress(25);
+
+        
+
+        //Check if build target is installed in the editor
+        if (!BuildPipeline.IsBuildTargetSupported(currentBuildTargetGroup, standaloneTarget))
+        {
+            Debug.LogError("Build target " + standaloneTarget + " is not installed in the editor");
+            return;
+        }
         try
         {
             uploadButton.SetEnabled(false);
@@ -537,15 +701,22 @@ public class PlayFlowCloudDeploy : EditorWindow
                 }
                 scenesToUpload.Add(sceneDropDown.value);
             }
+            
 
-            PlayFlowBuilder.BuildServer(devBuild.value, scenesToUpload);
+            bool success = PlayFlowBuilder.BuildServer(devBuild.value, scenesToUpload);
+            if (!success)
+            {
+                outputLogs("Build failed");
+                throw new Exception("Build failed");
+            }
             string zipFile = PlayFlowBuilder.ZipServerBuild();
             string directoryToZip = Path.GetDirectoryName(PlayFlowBuilder.defaultPath);
             showProgress(50);
             string targetfile = Path.Combine(directoryToZip, @".." + Path.DirectorySeparatorChar + "Server.zip");
             showProgress(75);
-            string playflow_logs = PlayFlowAPI.Upload(targetfile, tokenField.value, productionRegionOptions[location.value]);
+            string playflow_logs = PlayFlowAPI.Upload(targetfile, tokenField.value, productionRegionOptions[location.value], servertag.value);
             outputLogs(playflow_logs);
+            
         }
         finally
         {
@@ -576,6 +747,15 @@ public class PlayFlowCloudDeploy : EditorWindow
     private async void OnStartPressed()
     {
         string response = "";
+        if (api_version == 9)
+        {
+            if (LaunchTagDropdown.value == null || LaunchTagDropdown.value.Equals(""))
+            {
+                outputLogs("Select a launch tag first before starting or use `default` as the launch tag");
+                return;
+            }
+        }
+
         try
         {
             validateToken();
@@ -596,7 +776,7 @@ public class PlayFlowCloudDeploy : EditorWindow
             startButton.SetEnabled(false);
             response = await PlayFlowAPI.StartServer(tokenField.value, productionRegionOptions[location.value],
                 argumentsField.value, enableSSL.value.ToString(), sslValue.value.ToString(),
-                instance_types[instanceType.value], isProductionToken(tokenField.value));
+                instance_types[instanceType.value], isProductionToken(tokenField.value), LaunchTagDropdown.value);
             MatchInfo matchInfo = JsonUtility.FromJson<MatchInfo>(response);
             setCurrentServer(matchInfo);
 
@@ -657,6 +837,14 @@ public class PlayFlowCloudDeploy : EditorWindow
 }
 
 
+//{"tags":["default","serverversion1","randombugtest","testtttttt"]}
+[Serializable]
+public class TagsResponse
+{
+    public string[] tags;
+}
+
+
 [Serializable]
 public class Server
 {
@@ -668,6 +856,13 @@ public class Server
     public string match_id;
     public string ssl_url;
 
+}
+
+[Serializable]
+public class Validation_Response
+{
+    public string success;
+    public string api_version;
 }
 
 

@@ -17,7 +17,7 @@ public class cameractivation : NetworkBehaviour
         if (!base.IsOwner)
         {
             gameObject.SetActive(false);
-            gameObject.GetComponent<AudioListener>().enabled = false;
+           
         }
 
 

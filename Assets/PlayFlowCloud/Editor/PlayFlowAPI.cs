@@ -34,7 +34,7 @@ public class PlayFlowAPI
         }
     }
 
-    public static string Upload(string fileLocation, string token,string region)
+    public static string Upload(string fileLocation, string token,string region, string servertag)
     {
         string output = "";
         try
@@ -47,6 +47,7 @@ public class PlayFlowAPI
                 client.Headers.Add("token", token);
                 client.Headers.Add("region", region);
                 client.Headers.Add("version", version);
+                client.Headers.Add("server-tag", servertag);
 
                 responseArray = client.UploadFile(actionUrl, fileLocation);
 
@@ -61,7 +62,7 @@ public class PlayFlowAPI
         return output;
     }
 
-    public static async Task<string> StartServer(string token,string region, string arguments, string ssl, string port, string instanceType, bool isProduction)
+    public static async Task<string> StartServer(string token,string region, string arguments, string ssl, string port, string instanceType, bool isProduction, string servertag)
      {
 
          string actionUrl = API_URL + "start_game_server";
@@ -78,6 +79,7 @@ public class PlayFlowAPI
                  formData.Headers.Add("arguments", arguments);
                  formData.Headers.Add("ssl", ssl);
                  formData.Headers.Add("type", instanceType);
+                 formData.Headers.Add("server-tag", servertag);
 
                  if (true.ToString().Equals(ssl) && isProduction){
                      formData.Headers.Add("sslport", port);
@@ -155,14 +157,19 @@ public class PlayFlowAPI
 
 
         using (var client = new HttpClient())
-        using (var formData = new MultipartFormDataContent())
         {
-            formData.Headers.Add("token", token);
-            formData.Headers.Add("region", region);
-            formData.Headers.Add("version", version);
-            formData.Headers.Add("serverid", match);
+            // Create the request message with HttpMethod.Delete
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, actionUrl);
+            
+            // Add headers to the request message
+            requestMessage.Headers.Add("token", token);
+            requestMessage.Headers.Add("region", region);
+            requestMessage.Headers.Add("version", version);
+            requestMessage.Headers.Add("match-id", match);
 
-            var response = await client.PostAsync(actionUrl, formData);
+            // Send the DELETE request
+            var response = await client.SendAsync(requestMessage);
+            
             if (!response.IsSuccessStatusCode)
             {
                 Debug.Log(await response.Content.ReadAsStringAsync());
@@ -328,6 +335,87 @@ public class PlayFlowAPI
                 formData.Headers.Add("token", token);
                 formData.Headers.Add("version", version);
                 var response = await client.PostAsync(actionUrl, formData);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.Log(System.Text.Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync()));
+                }
+
+                output = System.Text.Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+
+        return output;
+    }
+    
+    public static async Task<string> Validate_Token(string token)
+    {
+        String output = "";
+        try
+        {
+            string actionUrl = API_URL + "validate_token";
+            using (var client = new HttpClient())
+            using (var formData = new MultipartFormDataContent())
+            {
+                formData.Headers.Add("token", token);
+                var response = await client.PostAsync(actionUrl, formData);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.Log(System.Text.Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync()));
+                }
+
+                output = System.Text.Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+
+        return output;
+    }
+    
+    public static async Task<string> Get_Tags(string token)
+    {
+        String output = "";
+        try
+        {
+            string actionUrl = API_URL + "server_tags";
+            using (var client = new HttpClient())
+            {
+                //Add headers
+                client.DefaultRequestHeaders.Add("token", token);
+                var response = await client.GetAsync(actionUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.Log(System.Text.Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync()));
+                }
+
+                output = System.Text.Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+
+        return output;
+    }
+    
+    public static async Task<string> Delete_Tag(string token, string tag)
+    {
+        String output = "";
+        try
+        {
+            string actionUrl = API_URL + "server_tags";
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("token", token);
+                client.DefaultRequestHeaders.Add("server-tag", tag);
+                var response = await client.DeleteAsync(actionUrl);
                 if (!response.IsSuccessStatusCode)
                 {
                     Debug.Log(System.Text.Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync()));

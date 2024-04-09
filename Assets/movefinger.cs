@@ -25,7 +25,7 @@ public class movefinger : MonoBehaviour
     
         
     
-    {
+   {
           transform.position = Vector3.MoveTowards(transform.position, endpos.position, speed);
        
             if(ga.transform.position == endpos.position)
