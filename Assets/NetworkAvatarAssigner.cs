@@ -111,14 +111,23 @@ public class NetworkAvatarAssigner : NetworkBehaviour
               if(args.Metadata.OutfitGender == OutfitGender.Masculine)
             {
                 avatar.GetComponent<Animator>().runtimeAnimatorController = transform.GetComponent<Animator>().runtimeAnimatorController;
-                avatar.AddComponent<AnimationStateConroller>();
-                avatar.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
+               
+                
+              avatar.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
                 avatar.AddComponent<EyeAnimationHandler>();
-            }  else
+                 var xdd = GameObject.FindObjectOfType(typeof(findingobject)) as findingobject;
+               xdd.enablenew();
+                /*   var xdd = GameObject.Find("Cubit");
+                    xdd.AddComponent<OVRLipSyncContextMorphTarget>();*/
+
+
+            }
+            else
             {
                 avatar.GetComponent<Animator>().runtimeAnimatorController = transform.GetComponent<Animator>().runtimeAnimatorController;
-                avatar.AddComponent<AnimationStateConroller>();
+              
                 avatar.AddComponent<EyeAnimationHandler>();
+               
             }
           
 

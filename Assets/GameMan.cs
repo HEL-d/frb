@@ -163,25 +163,28 @@ public class GameMan : NetworkBehaviour
     public void SpawnPlayer(NetworkConnection conn)
     {
        
-             Vector3 position = _spawnRegion.position;
+             Vector3 position = _spawnRegion2.position;
              Quaternion rotation = Quaternion.identity;
             int spawnPoint = 0;
-            foreach (var spawnedplayer in _spawnedPlayerObjects)
-            {
+        foreach (var spawnedplayer in _spawnedPlayerObjects)
+
 
             if (spawnedplayer.GetComponent<NetworkAvatarAssigner>().spawnpoints == 0)
-                {
-                    position = _spawnRegion2.position;
-                     rotation = Quaternion.Euler(position.x, position.y - 180, position.z);
-                    spawnPoint = 1;
-                }
-                else
-                {
-                    position = _spawnRegion.position;
-                    rotation = _spawnRegion.rotation;
-                   
-                }
+            {
+
+                position = _spawnRegion2.position;
+                rotation = _spawnRegion2.rotation;
+                spawnPoint = 1;
+
             }
+            else
+
+                position = _spawnRegion.position;
+                    rotation = _spawnRegion.rotation;
+
+            
+
+            
 
 
 

@@ -95,7 +95,7 @@ namespace FirstGearGames.LobbyAndWorld.Lobbies.JoinCreateRoomCanvases
         }
 
 
-           void getroomname(string v)
+        public void getroomname(string v)
         {
            
               _nameText.text = v;

@@ -21,33 +21,63 @@ MonoBehaviour:
   UseDracoCompression: 0
   UseMeshOptCompression: 0
   MorphTargets:
-  - Oculus Visemes
-  - mouthOpen
-  - mouthSmile
+  - viseme_aa
+  - viseme_E
+  - viseme_O
+  - viseme_U
+  - viseme_CH
+  - viseme_DD
+  - viseme_FF
+  - viseme_kk
+  - viseme_nn
+  - viseme_PP
+  - viseme_RR
+  - viseme_sil
+  - viseme_TH
+  - viseme_SS
+  - viseme_I
   - browDownLeft
   - browDownRight
   - browInnerUp
-  - noseSneerLeft
-  - noseSneerRight
-  - mouthFrownLeft
-  - mouthFrownRight
-  - mouthOpen
-  - mouthRollLower
-  - eyeWideLeft
-  - eyeWideRight
-  - jawForward
-  - mouthPucker
-  - mouthClose
-  - browInnerUp
   - browOuterUpLeft
   - browOuterUpRight
-  - mouthSmileLeft
-  - mouthPressLeft
-  - mouthLeft
-  - jawOpen
   - eyesClosed
-  - eyeLookUpLeft
-  - eyeLookOutLeft
-  - mouthLeft
   - eyeBlinkLeft
   - eyeBlinkRight
+  - eyeWideLeft
+  - eyeSquintRight
+  - eyeSquintLeft
+  - eyeWideRight
+  - eyeLookDownLeft
+  - eyeLookDownRight
+  - eyeLookUpLeft
+  - eyeLookOutLeft
+  - jawOpen
+  - jawForward
+  - jawLeft
+  - jawRight
+  - noseSneerLeft
+  - noseSneerRight
+  - cheekPuff
+  - cheekSquintLeft
+  - cheekSquintRight
+  - mouthSmile
+  - mouthOpen
+  - mouthSmileLeft
+  - mouthSmileRight
+  - mouthLeft
+  - mouthRight
+  - mouthFunnel
+  - mouthDimpleLeft
+  - mouthDimpleRight
+  - mouthStretchLeft
+  - mouthStretchRight
+  - mouthUpperUpLeft
+  - mouthUpperUpRight
+  - mouthFrownLeft
+  - mouthFrownRight
+  - mouthPucker
+  - mouthShrugLower
+  - mouthShrugUpper
+  - mouthLowerDownLeft
+  - mouthLowerDownRight

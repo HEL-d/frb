@@ -1,6 +1,8 @@
 ﻿using FirstGearGames.LobbyAndWorld.Extensions;
 using FirstGearGames.LobbyAndWorld.Lobbies;
+using FirstGearGames.LobbyAndWorld.Lobbies.JoinCreateRoomCanvases;
 using PlayFlow;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -31,12 +33,14 @@ namespace FirstGearGames.LobbyAndWorld.Global.Canvases
         /// Prefix for signedInText.
         /// </summary>
         private const string CURRENT_ROOM_PREFIX = "Currently in ";
-         
+        
         #endregion
 
         private void Awake()
         {
+           
             FirstInitialize();
+
         }
 
         /// <summary>
@@ -45,6 +49,7 @@ namespace FirstGearGames.LobbyAndWorld.Global.Canvases
         private void FirstInitialize()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
+           
             Reset();
         }
 
@@ -92,13 +97,27 @@ namespace FirstGearGames.LobbyAndWorld.Global.Canvases
         /// </summary>
         public void OnClick_Leave()
         {
+            
             //Hide current room.
             ShowCurrentRoom(false);
             LobbyNetwork.LeaveRoom();
-            
+          
+
+
             
 
+
+
+
+
+
         }
+
+        
+
+      
+
+
 
 
 
