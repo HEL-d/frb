@@ -16,32 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: b93e1de910e7657429b4943b616f1ff8
-  m_SerializeEntries:
-  - m_GUID: 845cdc3b486a57e4eb6f0616daa49171
-    m_Address: Assets/enormal.mp3
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ccb5c6f93e6e21e4ba5fd02ffba1db32
-    m_Address: Assets/hey.wav
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 460f37b40cf266a4d8d63acc19c80ffb
-    m_Address: Assets/heybro.mp3
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 52c35eb7cfeed234d894caf666e2e9c7
-    m_Address: Assets/normal.wav
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f79f05a7c50fbcc4d913affbea891e3b
-    m_Address: Assets/snormal.wav
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3e2ca07615afbf8459f7f852aa0ed895, type: 2}
   m_SchemaSet:

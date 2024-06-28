@@ -92,7 +92,7 @@ public class OVRLipSyncContextMorphTarget : MonoBehaviour
         // morph target needs to be set manually; possibly other components will need the same
            
 
-        skinnedMeshRenderer = GameObject.Find("avatarskelton(Clone)").transform.GetChild(4).GetComponentInChildren<SkinnedMeshRenderer>();
+        skinnedMeshRenderer = gameObject.transform.parent.GetChild(4).GetComponentInChildren<SkinnedMeshRenderer>();
         
         if (skinnedMeshRenderer == null)
         {
