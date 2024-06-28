@@ -18,7 +18,7 @@ namespace OpenAI
           [SerializeField] private RectTransform received;
 
           private float height;*/
-        private OpenAIApi openai = new OpenAIApi("sk-proj-zH8CeRboduqBzviWsuagT3BlbkFJBYRHfedPEh41cD00OXAk");
+        private OpenAIApi openai = new OpenAIApi();
 
         private List<ChatMessage> messages = new List<ChatMessage>();
         private string prompt = "you are here to only understand context, just by whatever user talking about,and if you are not sure about emotion, just choose neutral as animation, you only need to choose animation from following animation list, base on context  {neutral,  sad , laugh,  happy,  shocked, sleepy , angry , dirty,  blush, Agree } and answer in one words";
